@@ -78,6 +78,10 @@ sidekiq:
   pullQparallelism: 5
   pushQparallelism: 2
   mailersQparallelism: 2
+  defaultQreplicas: 1
+  pullQreplicas: 1
+  pushQreplicas: 1
+  mailersQreplicas: 1
   resources:
     requests:
       memory: 256Mi

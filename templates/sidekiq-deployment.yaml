@@ -10,7 +10,7 @@ metadata:
     heritage: {{ .Release.Service }}
     queue: default
 spec:
-  replicas: 1
+  replicas: {{ .Values.sidekiq.defaultQreplicas }}
   selector:
     matchLabels:
       app: {{ template "name" . }}
@@ -66,7 +66,7 @@ metadata:
     heritage: {{ .Release.Service }}
     queue: mailers
 spec:
-  replicas: 1
+  replicas: {{ .Values.sidekiq.mailersQreplicas }}
   selector:
     matchLabels:
       app: {{ template "name" . }}
@@ -122,7 +122,7 @@ metadata:
     heritage: {{ .Release.Service }}
     queue: pull
 spec:
-  replicas: 1
+  replicas: {{ .Values.sidekiq.pullQreplicas }}
   selector:
     matchLabels:
       app: {{ template "name" . }}
@@ -178,7 +178,7 @@ metadata:
     heritage: {{ .Release.Service }}
     queue: push
 spec:
-  replicas: 1
+  replicas: {{ .Values.sidekiq.pushQreplicas }}
   selector:
     matchLabels:
       app: {{ template "name" . }}
