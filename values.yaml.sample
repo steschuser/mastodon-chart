@@ -26,6 +26,15 @@ env:
   # cloudfrontHost: "dummy"
   # streamingApiBaseUrl: "dummy"
 
+httpd:
+  name: assets
+  servicePort: 80
+  containerPort: 80
+  resources:
+    requests:
+      memory: 32Mi
+      cpu: 50m
+
 web:
   name: web
   image: tootsuite/mastodon
@@ -65,7 +74,10 @@ sidekiq:
   image: tootsuite/mastodon
   imageTag: v3.2.0
   imagePullPolicy: IfNotPresent
-  parallelism: 3
+  defaultQparallelism: 2
+  pullQparallelism: 5
+  pushQparallelism: 2
+  mailersQparallelism: 2
   resources:
     requests:
       memory: 256Mi

@@ -1,0 +1,20 @@
+apiVersion: v1
+kind: Service
+metadata:
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: "{{ .Values.httpd.name }}"
+    heritage: {{ .Release.Service }}
+    release: {{ .Release.Name }}
+  name: {{ template "httpd.fullname" . }}
+spec:
+  ports:
+    - name: http
+      port: {{ .Values.httpd.servicePort }}
+      targetPort: httpd
+  selector:
+    app: {{ template "name" . }}
+    component: "{{ .Values.httpd.name }}"
+    release: {{ .Release.Name }}
+  type: "ClusterIP"

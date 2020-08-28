@@ -1,0 +1,47 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "httpd.fullname" . }}
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: "{{ .Values.httpd.name }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        component: "{{ .Values.httpd.name }}"
+        release: {{ .Release.Name }}
+    spec:
+      imagePullSecrets:
+      - name: gitlab-private-registry
+      containers:
+      - name: {{ template "name" . }}-{{ .Values.httpd.name }}
+        image: registry.gitlab.com/snowgoons/kubernetes/customised-helm-charts/mastodon/assets-httpd:latest
+        imagePullPolicy: IfNotPresent
+        ports:
+        - name: httpd
+          containerPort: {{ .Values.httpd.containerPort }}
+        resources:
+{{ toYaml .Values.httpd.resources | indent 10 }}
+        volumeMounts:
+        - name: assets
+          mountPath: /mastodon/public/assets
+        - name: system
+          mountPath: /mastodon/public/system
+      volumes:
+      - name: system
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-system
+      - name: assets
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-assets
