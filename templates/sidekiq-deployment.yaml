@@ -1,18 +1,20 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: {{ template "sidekiq.fullname" . }}
+  name: {{ template "sidekiq.fullname" . }}-default
   labels:
     app: {{ template "name" . }}
     chart: {{ .Chart.Name }}-{{ .Chart.Version }}
     component: "{{ .Values.sidekiq.name }}"
     release: {{ .Release.Name }}
     heritage: {{ .Release.Service }}
+    queue: default
 spec:
   replicas: 1
   selector:
     matchLabels:
       app: {{ template "name" . }}
+      queue: default
   strategy:
     type: RollingUpdate
   template:
@@ -21,6 +23,7 @@ spec:
         app: {{ template "name" . }}
         component: "{{ .Values.sidekiq.name }}"
         release: {{ .Release.Name }}
+        queue: default
     spec:
       containers:
       - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
@@ -31,15 +34,177 @@ spec:
           - exec
           - sidekiq
           - -c
-          - "{{ .Values.sidekiq.parallelism }}"
+          - "{{ .Values.sidekiq.defaultQparallelism }}"
           - -q
           - default
-          - -q
-          - mailers
-          - -q
-          - pull
-          - -q
-          - push
+        env:
+{{ include "productonEnvironment" . | indent 8 }}
+        resources:
+{{ toYaml .Values.sidekiq.resources | indent 10 }}
+        volumeMounts:
+        - name: assets
+          mountPath: /mastodon/public/assets
+        - name: system
+          mountPath: /mastodon/public/system
+      volumes:
+      - name: assets
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-assets
+      - name: system
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sidekiq.fullname" . }}-mailers
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: "{{ .Values.sidekiq.name }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    queue: mailers
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      queue: mailers
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        component: "{{ .Values.sidekiq.name }}"
+        release: {{ .Release.Name }}
+        queue: mailers
+    spec:
+      containers:
+      - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
+        image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"
+        imagePullPolicy: {{ .Values.sidekiq.imagePullPolicy | quote }}
+        command:
+        - bundle
+        - exec
+        - sidekiq
+        - -c
+        - "{{ .Values.sidekiq.mailersQparallelism }}"
+        - -q
+        - mailers
+        env:
+{{ include "productonEnvironment" . | indent 8 }}
+        resources:
+{{ toYaml .Values.sidekiq.resources | indent 10 }}
+        volumeMounts:
+        - name: assets
+          mountPath: /mastodon/public/assets
+        - name: system
+          mountPath: /mastodon/public/system
+      volumes:
+      - name: assets
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-assets
+      - name: system
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sidekiq.fullname" . }}-pull
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: "{{ .Values.sidekiq.name }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    queue: pull
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      queue: pull
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        component: "{{ .Values.sidekiq.name }}"
+        release: {{ .Release.Name }}
+        queue: pull
+    spec:
+      containers:
+      - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
+        image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"
+        imagePullPolicy: {{ .Values.sidekiq.imagePullPolicy | quote }}
+        command:
+        - bundle
+        - exec
+        - sidekiq
+        - -c
+        - "{{ .Values.sidekiq.pullQparallelism }}"
+        - -q
+        - pull
+        env:
+{{ include "productonEnvironment" . | indent 8 }}
+        resources:
+{{ toYaml .Values.sidekiq.resources | indent 10 }}
+        volumeMounts:
+        - name: assets
+          mountPath: /mastodon/public/assets
+        - name: system
+          mountPath: /mastodon/public/system
+      volumes:
+      - name: assets
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-assets
+      - name: system
+        persistentVolumeClaim:
+          claimName: {{ template "web.fullname" . }}-system
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: {{ template "sidekiq.fullname" . }}-push
+  labels:
+    app: {{ template "name" . }}
+    chart: {{ .Chart.Name }}-{{ .Chart.Version }}
+    component: "{{ .Values.sidekiq.name }}"
+    release: {{ .Release.Name }}
+    heritage: {{ .Release.Service }}
+    queue: push
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: {{ template "name" . }}
+      queue: push
+  strategy:
+    type: RollingUpdate
+  template:
+    metadata:
+      labels:
+        app: {{ template "name" . }}
+        component: "{{ .Values.sidekiq.name }}"
+        release: {{ .Release.Name }}
+        queue: push
+    spec:
+      containers:
+      - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
+        image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"
+        imagePullPolicy: {{ .Values.sidekiq.imagePullPolicy | quote }}
+        command:
+        - bundle
+        - exec
+        - sidekiq
+        - -c
+        - "{{ .Values.sidekiq.pushQparallelism }}"
+        - -q
+        - push
         env:
 {{ include "productonEnvironment" . | indent 8 }}
         resources:
