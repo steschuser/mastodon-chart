@@ -26,8 +26,13 @@ we have:
   traffic.  The ```ingress.yaml``` in this branch can be considered distinctly
   custom, therefore.
   
-* I have static content configured to be delivered by Rails.  This is likely
-  to change soon when I'll set up a simple webserver to deliver for me.
+* A dedicated Apache webserver instance serves up the static content, more efficiently
+  than passing those requests through to the main Rail apps - it also adds
+  headers which ask Cloudflare (my CDN) to cache those files for a good
+  long time.  (Why Apache and not nginx?  Nginx has some SSE instruction
+  dependencies which cause it to occasionally coredump on my Intel Atom based
+  servers.  I could probably fix this by compiling a new image from source,
+  or I can just ignore it and use Apache...)
 
 ## How to Install?
 
