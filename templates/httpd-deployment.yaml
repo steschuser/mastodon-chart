@@ -27,7 +27,7 @@ spec:
       containers:
       - name: {{ template "name" . }}-{{ .Values.httpd.name }}
         image: registry.gitlab.com/snowgoons/kubernetes/customised-helm-charts/mastodon/assets-httpd:latest
-        imagePullPolicy: IfNotPresent
+        imagePullPolicy: Always
         ports:
         - name: httpd
           containerPort: {{ .Values.httpd.containerPort }}
