@@ -20,7 +20,7 @@ data:
 
       acl is_streaming path -i -m beg /api/v1/streaming
       acl is_static    path -i -m beg /system/media_attachments
-      acl is_static    path -i -m beg /system/cache/media_attachments
+      acl is_static    path -i -m beg /system/cache
 
       use-server stream-be if is_streaming
       server stream-be {{ .Release.Name }}-{{ .Chart.Name }}-{{ .Values.streaming.name }}.mastodon.svc.cluster.local:{{ .Values.streaming.servicePort }} weight 0
