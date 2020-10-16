@@ -76,6 +76,19 @@ spec:
           mountPath: /usr/local/etc/haproxy
         ports:
         - containerPort: {{ .Values.web.servicePort }}
+        # Annoyingly, I can't use an HTTP liveness probe because the
+        # HTTP-to-HTTPS redirect that Mastodon returns breaks it...
+        livenessProbe:
+          tcpSocket:
+            port: {{ .Values.web.servicePort }}
+          failureThreshold: 3
+          periodSeconds: 10
+        startupProbe:
+          tcpSocket:
+            port: {{ .Values.web.servicePort }}
+          failureThreshold: 30
+          periodSeconds: 10
+
       volumes:
       - name: haproxy-cfg-file
         configMap:
