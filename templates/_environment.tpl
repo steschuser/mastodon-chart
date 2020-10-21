@@ -21,6 +21,8 @@ Production environment for mastodon
   value: "1"
 - name: RAILS_SERVE_STATIC_FILES
   value: "true"
+- name: RAILS_LOG_LEVEL
+  value: "{{ .Values.web.logLevel | default "info" }}"
 - name: WEB_CONCURRENCY
   value: "{{ .Values.web.concurrency }}"
 - name: MAX_THREADS

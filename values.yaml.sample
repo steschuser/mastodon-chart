@@ -44,6 +44,7 @@ web:
   containerPort: 3000
   concurrency: 5
   maxThreads: 5
+  logLevel: info
   ingress:
     host: SET_YOUR_DOMAIN
   persistentVolume:
