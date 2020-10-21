@@ -1,11 +1,10 @@
 description: A Helm chart for Mastodon
 name: mastodon
 sources:
-- https://github.com/tootsuite/mastodon
-- https://github.com/Ladicle/mastodon-chart
 - https://github.com/timwalls/mastodon-chart
+- https://github.com/tootsuite/mastodon
 maintainers:
 - email: tim.walls@snowgoons.com
-  name: Tim Walls
-version: 0.2.0
+  name: timwalls
+version: 1.0.0
 engine: gotpl
