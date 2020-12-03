@@ -63,7 +63,8 @@ spec:
     spec:
       tolerations:
       - key: "CPUPower"
-        operator: "Exists"
+        operator: "Equal"
+        value: "Limited"
         effect: "NoExecute"
       imagePullSecrets:
       - name: gitlab-private-registry
