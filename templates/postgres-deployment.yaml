@@ -62,9 +62,9 @@ spec:
             - sh
             - -c
             - exec pg_isready --host $POD_IP
-          initialDelaySeconds: 5
+          initialDelaySeconds: 60
           timeoutSeconds: 3
-          periodSeconds: 5
+          periodSeconds: 30
         resources:
 {{ toYaml .Values.postgres.resources | indent 10 }}
         volumeMounts:
