@@ -37,6 +37,8 @@ spec:
           - "{{ .Values.sidekiq.defaultQparallelism }}"
           - -q
           - default
+          - -q
+          - scheduler
         env:
 {{ include "productonEnvironment" . | indent 8 }}
         resources:

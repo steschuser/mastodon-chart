@@ -1,3 +1,4 @@
+apiVersion: v2
 description: A Helm chart for Mastodon
 name: mastodon
 sources:
@@ -6,5 +7,6 @@ sources:
 maintainers:
 - email: tim.walls@snowgoons.com
   name: timwalls
-version: 1.0.0
+version: 3.3.0-snow.0
+appVersion: 3.3.0
 engine: gotpl
