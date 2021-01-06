@@ -45,6 +45,8 @@ web:
   concurrency: 5
   maxThreads: 5
   logLevel: info
+  keepMediaDays: 7
+  maintenanceHour: 3
   ingress:
     host: SET_YOUR_DOMAIN
   persistentVolume:
