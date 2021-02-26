@@ -28,6 +28,16 @@ spec:
         component: "{{ .Values.postgres.name }}"
         release: {{ .Release.Name }}
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - high
+            weight: 100
       containers:
       - name: {{ template "name" . }}-{{ .Values.postgres.name }}
         image: "{{ .Values.postgres.image }}:{{ .Values.postgres.imageTag }}"
