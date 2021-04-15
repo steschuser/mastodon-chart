@@ -118,28 +118,35 @@ spec:
     targetPort: {{ .Values.web.servicePort }}
   type: ClusterIP
 ---
-apiVersion: extensions/v1beta1
-kind: Ingress
+apiVersion: apps/v1
+kind: Deployment
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: argo-tunnel
-  labels:
-    component: ingress
-    app: {{ template "fullname" . }}
-    chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
-    site: {{ template "web.fullname" . }}
-  name: {{ template "web.fullname" . }}
+  name: mastodon-cloudflared
   namespace: dmz
+  labels:
+    app: cloudflared
+    site: {{ template "web.fullname" . }}
 spec:
-  rules:
-  - host: {{ .Values.web.ingress.host }}
-    http:
-      paths:
-      - path: /
-        backend:
-          serviceName: {{ .Release.Name }}-{{ .Chart.Name }}-dmz
-          servicePort: {{ .Values.web.servicePort }}
-  tls:
-    - hosts:
-      - {{ .Values.web.ingress.host }}
-      secretName: snowgoonsdotro-tunnel-cert
+  replicas: 1
+  selector:
+    matchLabels:
+      app: cloudflared
+      site: {{ template "web.fullname" . }}
+  template:
+    metadata:
+      labels:
+        app: cloudflared
+        site: {{ template "web.fullname" . }}
+    spec:
+      containers:
+      - name: cloudflared
+        image: cloudflare/cloudflared:2021.4.0
+        args: [ "tunnel", "--no-autoupdate", "run", "--url", "{{ .Release.Name }}-{{ .Chart.Name }}-dmz.dmz.svc.cluster.local:{{ .Values.web.servicePort }}", "bdd47e01-95e8-48cd-aa60-98c457827ecd" ]
+        volumeMounts:
+        - name: cloudflared-config
+          mountPath: /etc/cloudflared
+          readOnly: true
+      volumes:
+      - name: cloudflared-config
+        secret:
+          secretName: mastodon-cloudflared-secret
