@@ -25,6 +25,16 @@ spec:
         release: {{ .Release.Name }}
         queue: default
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       containers:
       - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
         image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"
@@ -83,6 +93,16 @@ spec:
         release: {{ .Release.Name }}
         queue: mailers
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       containers:
       - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
         image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"
@@ -139,6 +159,16 @@ spec:
         release: {{ .Release.Name }}
         queue: pull
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       containers:
       - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
         image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"
@@ -195,6 +225,16 @@ spec:
         release: {{ .Release.Name }}
         queue: push
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       containers:
       - name: {{ template "name" . }}-{{ .Values.sidekiq.name }}
         image: "{{ .Values.sidekiq.image }}:{{ .Values.sidekiq.imageTag }}"

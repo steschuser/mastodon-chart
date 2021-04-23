@@ -22,6 +22,16 @@ spec:
         component: "{{ .Values.httpd.name }}"
         release: {{ .Release.Name }}
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       imagePullSecrets:
       - name: gitlab-private-registry
       containers:

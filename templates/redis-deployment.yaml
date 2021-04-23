@@ -22,6 +22,16 @@ spec:
         component: "{{ .Values.redis.name }}"
         release: {{ .Release.Name }}
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       containers:
       - name: {{ template "name" . }}-{{ .Values.redis.name }}
         image: "{{ .Values.redis.image }}:{{ .Values.redis.imageTag }}"

@@ -61,11 +61,17 @@ spec:
         app: haproxy
         site: {{ .Release.Name }}-{{ .Chart.Name }}
     spec:
-      tolerations:
-      - key: "CPUPower"
-        operator: "Equal"
-        value: "Limited"
-        effect: "NoExecute"
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
+
       imagePullSecrets:
       - name: gitlab-private-registry
       containers:
@@ -138,6 +144,16 @@ spec:
         app: cloudflared
         site: {{ template "web.fullname" . }}
     spec:
+      affinity:
+        nodeAffinity:
+          preferredDuringSchedulingIgnoredDuringExecution:
+          - preference:
+              matchExpressions:
+              - key: cv.performance
+                operator: In
+                values:
+                - mid
+            weight: 100
       containers:
       - name: cloudflared
         image: cloudflare/cloudflared:2021.4.0
