@@ -68,7 +68,7 @@ Production environment for mastodon
 - name: CDN_HOST
   value: "{{ .Values.env.assets.cdnHost }}"
 {{- end }}
-{{- if .Values.env.s3 -}}
+{{- if .Values.env.s3 }}
 - name: S3_ENABLED
   value: "{{ .Values.env.s3.enabled }}"
 - name: S3_BUCKET
