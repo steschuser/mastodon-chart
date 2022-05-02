@@ -69,7 +69,7 @@ spec:
 {{ toYaml .Values.postgres.resources | indent 10 }}
         volumeMounts:
         - name: data
-          mountPath: /var/lib/postgresql/data/pgdata
+          mountPath: /var/lib/postgresql/data/
 {{- if .Values.postgres.metrics.enabled }}
       - name: metrics
         image: "{{ .Values.postgres.metrics.image }}:{{ .Values.postgres.metrics.imageTag }}"
