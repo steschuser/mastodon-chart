@@ -47,17 +47,21 @@ Production environment for mastodon
   value: "{{ .Values.env.smtp.server }}"
 - name: SMTP_PORT
   value: "{{ .Values.env.smtp.port }}"
+- name: SMTP_AUTH_METHOD
+  value: "{{ .Values.env.smtp.auth_method }}"
+{{- if ne .Values.env.smtp.auth_method "none" }}
 - name: SMTP_LOGIN
   value: "{{ .Values.env.smtp.login }}"
-- name: SMTP_OPENSSL_VERIFY_MODE
-  value: "{{ .Values.env.smtp.opensslVerifyMode }}"
-- name: SMTP_DOMAIN
-  value: "{{ .Values.env.smtp.domain }}"
 - name: SMTP_PASSWORD
   valueFrom:
     secretKeyRef:
       name: {{ template "web.fullname" . }}
       key: smtpPassword
+{{- end }}
+- name: SMTP_OPENSSL_VERIFY_MODE
+  value: "{{ .Values.env.smtp.opensslVerifyMode }}"
+- name: SMTP_DOMAIN
+  value: "{{ .Values.env.smtp.domain }}"
 - name: SMTP_FROM_ADDRESS
   value: "{{ .Values.env.smtp.address }}"
 {{- if .Values.env.assets -}}
@@ -77,6 +81,8 @@ Production environment for mastodon
   value: "{{ .Values.env.s3.awsAccessKeyId }}"
 - name: AWS_SECRET_ACCESS_KEY
   value: "{{ .Values.env.s3.awsSecretAccessKey }}"
+- name: S3_ALIAS_HOST
+  value: "{{ .Values.env.s3.alias_host }}"
 - name: S3_REGION
   value: "{{ .Values.env.s3.region }}"
 - name: S3_PROTOCOL
