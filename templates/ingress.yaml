@@ -1,9 +1,7 @@
-apiVersion: extensions/v1beta1
+apiVersion: networking.k8s.io/v1
 kind: Ingress
 metadata:
-  annotations:
-    kubernetes.io/ingress.class: "nginx"
-    kubernetes.io/tls-acme: "true"
+  annotations: {}
   labels:
     app: {{ template "fullname" . }}
     chart: "{{ .Chart.Name }}-{{ .Chart.Version }}"
@@ -12,19 +10,22 @@ metadata:
     release: "{{ .Release.Name }}"
   name: {{ template "web.fullname" . }}
 spec:
+  ingressClassName: public
   rules:
   - host: {{ .Values.web.ingress.host }}
     http:
       paths:
       - path: /
+        pathType: Prefix
         backend:
-          serviceName: {{ .Release.Name }}-{{ .Chart.Name }}-{{ .Values.web.name }}
-          servicePort: {{ .Values.web.servicePort }}
+          service:
+            name: {{ .Release.Name }}-{{ .Chart.Name }}-{{ .Values.web.name }}
+            port: 
+              number: {{ .Values.web.servicePort }}
       - path: /api/v1/streaming
+        pathType: Prefix
         backend:
-          serviceName: {{ .Release.Name }}-{{ .Chart.Name }}-{{ .Values.streaming.name }}
-          servicePort: {{ .Values.streaming.servicePort }}
-  tls:
-  - secretName: {{ template "name" . }}-lego-secret
-    hosts:
-    - {{ .Values.web.ingress.host }}
+          service:
+            name: {{ .Release.Name }}-{{ .Chart.Name }}-{{ .Values.streaming.name }}
+            port:
+              number: {{ .Values.streaming.servicePort }}
