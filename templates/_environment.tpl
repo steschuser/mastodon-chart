@@ -83,12 +83,16 @@ Production environment for mastodon
   value: "{{ .Values.env.s3.awsSecretAccessKey }}"
 - name: S3_ALIAS_HOST
   value: "{{ .Values.env.s3.alias_host }}"
+{{- if .Values.env.s3.region }}
 - name: S3_REGION
   value: "{{ .Values.env.s3.region }}"
+{{- end }}
 - name: S3_PROTOCOL
   value: "{{ .Values.env.s3.protocol }}"
 - name: S3_HOSTNAME
   value: "{{ .Values.env.s3.hostname }}"
+- name: S3_ENDPOINT
+  value: "{{ .Values.env.s3.endpoint }}"
 - name: S3_CLOUDFRONT_HOST
   value: "{{ .Values.env.s3.cloudfrontHost }}"
 - name: STREAMING_API_BASE_URL
